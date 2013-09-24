@@ -1,6 +1,6 @@
-EIGEN_INCLUDE=-I /opt/local/include/eigen3
+EIGEN_INCLUDE=`pkg-config --cflags-only-I eigen3`
 CIMG_INCLUDE=-I /opt/local/include
-LIBX11=-L/opt/local/lib -lX11
+LIBX11=`pkg-config --libs x11`
 INCLUDE=$(EIGEN_INCLUDE) $(CIMG_INCLUDE) -I include
 CC=c++
 CFLAGS=-g -O2
