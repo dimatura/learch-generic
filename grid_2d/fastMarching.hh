@@ -7,8 +7,6 @@
 
 typedef enum { ARRAY_C_LAYOUT, ARRAY_FORTRAN_LAYOUT } ArrayNDLayout;
 
-using namespace std;
-
 /**
    Just stores some meta-information for the open list
  */
@@ -17,8 +15,8 @@ class OpenListElt {
 public:
   OpenListElt(int _id, int _age, double _priority, const Elt& _elt) :
     id(_id),
-    age(_age), 
-    priority(_priority), 
+    age(_age),
+    priority(_priority),
     elt(_elt) {
     /*
     cout << "Creating element with age " << age <<
@@ -31,7 +29,7 @@ public:
   double priority;
   Elt elt;
 };
- 
+
 template <class Elt>
 class OpenListEltComparer {
 public:
@@ -48,12 +46,12 @@ public:
     //    cout << "Making open list, max "  << maxOpen << endl;
 
     eltAge = new int[maxOpen];
-    
+
     for (int ii = 0; ii < maxOpen; ii++)
       eltAge[ii] = 0;
   };
 
-  virtual ~OpenList() { 
+  virtual ~OpenList() {
     delete [] eltAge;
   };
 
@@ -121,21 +119,21 @@ public:
 
     // not empty if there's a valid element on top
     if (pqTop.age == eltAge[pqTop.id]) {
-      //      cout << "Empty: No. age = " << pqTop.age << endl; 
+      //      cout << "Empty: No. age = " << pqTop.age << endl;
 
       return false;
     } else {
       // discard invalid elements
       pop();
-      
+
       return empty();
     }
   }
 
 private:
   int *eltAge;			// array of element "ages"
-  priority_queue<OpenListElt<Elt>, 
-		 vector<OpenListElt<Elt> >, 
+  priority_queue<OpenListElt<Elt>,
+		 vector<OpenListElt<Elt> >,
 		 OpenListEltComparer<Elt> > prioQueue;
 };
 
@@ -145,7 +143,7 @@ private:
 template <class Elt>
 class ArrayND {
 public:
-  ArrayND(Elt* _costarray, const vector<int>& _dims, ArrayNDLayout layout) : 
+  ArrayND(Elt* _costarray, const vector<int>& _dims, ArrayNDLayout layout) :
     costarray(_costarray),
     dims(_dims)
   {
@@ -171,7 +169,7 @@ public:
   Elt get(const vector<int>& subs) const {
     return costarray[sub2ind(subs)];
   }
-  
+
   void set(int index, const Elt& value) {
     costarray[index] = value;
   }
@@ -179,7 +177,7 @@ public:
   void set(const vector<int>& subs, const Elt& value) {
     costarray[sub2ind(subs)] = value;
   }
-  
+
   int numel() const {
     int numel = 1;
     for (unsigned int ii = 0; ii < dims.size(); ii++) {
@@ -200,9 +198,9 @@ public:
   // Assumes first subscript stored consecutively in memory
   // for c layout: xi = 0, xend = size subs - 1, delta = 1
   // for fortran layout: xi = size subs - 1, xend = 0, delta = -1
-  static int sub2ind(const vector<int>& dims, 
-		     const vector<int>& subs, 
-		     unsigned int xi, 
+  static int sub2ind(const vector<int>& dims,
+		     const vector<int>& subs,
+		     unsigned int xi,
 		     unsigned int xend,
 		     int delta) {
 
@@ -215,18 +213,18 @@ public:
     NB: precondition: subs.size() == dims()
    */
   static void ind2sub(const vector<int>& dims,
-		      int ind, 
+		      int ind,
 		      vector<int>& subs,
 		      unsigned int xi,
 		      unsigned int xend,
 		      int delta) {
-    
+
     int sub = ind % dims[xi];
 
     subs[xi] = sub;
 
     if (xi == xend) return;
-    
+
     ind2sub(dims, (ind - sub) / dims[xi], subs, xi+delta, xend, delta);
   }
 
@@ -239,7 +237,7 @@ public:
   }
 
 private:
-  
+
   Elt *costarray;
   vector<int> dims;
 
@@ -249,14 +247,14 @@ private:
 
 class LatticePoint {
 public:
-  LatticePoint(int _id, int _nbDim) : 
+  LatticePoint(int _id, int _nbDim) :
     id(_id),
     nbDim(_nbDim)
   {
   }
 
   int id;
-  int nbDim;			
+  int nbDim;
 };
 
 class SetCompareLatticePoint {
@@ -273,7 +271,7 @@ public:
 };
 
 /*
-bool fastMarching(const ArrayND<double>& costmap, 
+bool fastMarching(const ArrayND<double>& costmap,
 		  const vector<int> goal,
 		  ArrayND<double>& valf);
 */
@@ -281,12 +279,12 @@ bool fastMarching(const ArrayND<double>& costmap,
 /**
    \param costmap A grid of costs
    \param costDx The dimensions of each grid cell
-   \param goal The goal. If empty, all cells with negative costs are assumed to 
+   \param goal The goal. If empty, all cells with negative costs are assumed to
                be goal states.
    \param stop If nonempty, the calculation stops when this cell is expanded
    \param valf Filled with value function on return
  */
-bool fastMarching(ArrayND<double>& costmap, 
+bool fastMarching(ArrayND<double>& costmap,
 		  const vector<double>& costDx,
 		  const vector<int> goal,
                   const vector<int> stop,
