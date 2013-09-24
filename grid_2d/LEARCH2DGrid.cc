@@ -263,7 +263,7 @@ public:
       image += 1.0;
 
       CImgDisplay display(image, "Click and drag to define training path");
-      cout << "Click and drag to define training path\n";
+      printf("Click and drag to define training path\n");
       Grid2DEnvironment env
         (image, N_BLUR_FEATURES, FEATURE_MIN_BLUR, FEATURE_MAX_BLUR);
       EnvAndPath envAndPath(env, GetPathFromClicks(display));
