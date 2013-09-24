@@ -132,8 +132,8 @@ public:
 
 private:
   int *eltAge;			// array of element "ages"
-  priority_queue<OpenListElt<Elt>,
-		 vector<OpenListElt<Elt> >,
+  std::priority_queue<OpenListElt<Elt>,
+		 std::vector<OpenListElt<Elt> >,
 		 OpenListEltComparer<Elt> > prioQueue;
 };
 
@@ -143,7 +143,7 @@ private:
 template <class Elt>
 class ArrayND {
 public:
-  ArrayND(Elt* _costarray, const vector<int>& _dims, ArrayNDLayout layout) :
+  ArrayND(Elt* _costarray, const std::vector<int>& _dims, ArrayNDLayout layout) :
     costarray(_costarray),
     dims(_dims)
   {
@@ -166,7 +166,7 @@ public:
     return costarray[index];
   }
 
-  Elt get(const vector<int>& subs) const {
+  Elt get(const std::vector<int>& subs) const {
     return costarray[sub2ind(subs)];
   }
 
@@ -174,7 +174,7 @@ public:
     costarray[index] = value;
   }
 
-  void set(const vector<int>& subs, const Elt& value) {
+  void set(const std::vector<int>& subs, const Elt& value) {
     costarray[sub2ind(subs)] = value;
   }
 
@@ -186,20 +186,20 @@ public:
     return numel;
   }
 
-  void ind2sub(int ind, vector<int>& subs) const {
+  void ind2sub(int ind, std::vector<int>& subs) const {
     subs.resize(ndims(), 0);
     ind2sub(dims, ind, subs, iStart, iEnd, iDelta);
   }
 
-  int sub2ind(const vector<int>& subs) const {
+  int sub2ind(const std::vector<int>& subs) const {
     return sub2ind(dims, subs, iStart, iEnd, iDelta);
   }
 
   // Assumes first subscript stored consecutively in memory
   // for c layout: xi = 0, xend = size subs - 1, delta = 1
   // for fortran layout: xi = size subs - 1, xend = 0, delta = -1
-  static int sub2ind(const vector<int>& dims,
-		     const vector<int>& subs,
+  static int sub2ind(const std::vector<int>& dims,
+		     const std::vector<int>& subs,
 		     unsigned int xi,
 		     unsigned int xend,
 		     int delta) {
@@ -212,9 +212,9 @@ public:
   /*
     NB: precondition: subs.size() == dims()
    */
-  static void ind2sub(const vector<int>& dims,
+  static void ind2sub(const std::vector<int>& dims,
 		      int ind,
-		      vector<int>& subs,
+		      std::vector<int>& subs,
 		      unsigned int xi,
 		      unsigned int xend,
 		      int delta) {
@@ -232,14 +232,14 @@ public:
     return dims.size();
   }
 
-  vector<int> getDims() const {
+  std::vector<int> getDims() const {
     return dims;
   }
 
 private:
 
   Elt *costarray;
-  vector<int> dims;
+  std::vector<int> dims;
 
   unsigned int iStart, iEnd;
   int iDelta;
@@ -272,7 +272,7 @@ public:
 
 /*
 bool fastMarching(const ArrayND<double>& costmap,
-		  const vector<int> goal,
+		  const std::vector<int> goal,
 		  ArrayND<double>& valf);
 */
 
@@ -285,9 +285,9 @@ bool fastMarching(const ArrayND<double>& costmap,
    \param valf Filled with value function on return
  */
 bool fastMarching(ArrayND<double>& costmap,
-		  const vector<double>& costDx,
-		  const vector<int> goal,
-                  const vector<int> stop,
+		  const std::vector<double>& costDx,
+		  const std::vector<int> goal,
+      const std::vector<int> stop,
 		  ArrayND<double>& valf);
 
 

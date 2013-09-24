@@ -20,7 +20,7 @@ public:
 
   // Represents the tree-structured regressor
   class RTree {
-  public: 
+  public:
     virtual double Eval(const learch_vector& state) const = 0;
     virtual RTree* Clone() const = 0;
     virtual ~RTree() {};
@@ -30,14 +30,14 @@ public:
   // Sum of regressors
   class RSum : public RTree {
   public:
-    RSum(const RTree& _n0, const RTree& _n1) 
+    RSum(const RTree& _n0, const RTree& _n1)
       : n0(_n0.Clone()), n1(_n1.Clone()) {};
     ~RSum() { delete n0; delete n1; }
     RSum* Clone() const { return new RSum(*n0, *n1); }
-    double Eval(const learch_vector& s) const { 
-      return n0->Eval(s) + n1->Eval(s); 
+    double Eval(const learch_vector& s) const {
+      return n0->Eval(s) + n1->Eval(s);
     }
-    std::string AsString() const { 
+    std::string AsString() const {
       using std::string;
       return "( " + n0->AsString() + " ) + ( " + n1->AsString() + " ) ";
     }
@@ -46,7 +46,7 @@ public:
     RSum(const RSum& n) : n0(n.n0.Clone()), n1(n.n1.Clone()) {};
     const RTree *n0, *n1;
   };
-  
+
   // Scaled regressor
   class RScale : public RTree {
   public:
@@ -56,7 +56,7 @@ public:
     RScale* Clone() const { return new RScale(*n0, scale); }
     double Eval(const learch_vector& s) const { return scale * n0->Eval(s); }
     std::string AsString() const {
-      return "( " + boost::lexical_cast<std::string>(scale) 
+      return "( " + boost::lexical_cast<std::string>(scale)
         + " * ( " + n0->AsString() + " ) )";
     }
   private:
@@ -69,13 +69,13 @@ public:
   // Thresholded regressor
   class RThresh : public RTree {
   public:
-    RThresh(const RTree& _n0, double _threshold) 
+    RThresh(const RTree& _n0, double _threshold)
       : n0(_n0.Clone()), threshold(_threshold) {};
     ~RThresh() { delete n0; }
     RThresh* Clone() const { return new RThresh(*n0, threshold); }
-    double Eval(const learch_vector& s) const { 
-      double raw = n0->Eval(s); 
-      return raw > threshold ? raw : threshold; 
+    double Eval(const learch_vector& s) const {
+      double raw = n0->Eval(s);
+      return raw > threshold ? raw : threshold;
     }
     std::string AsString() const {
       return "THRESH( " + n0->AsString() + " ) ";
@@ -86,14 +86,14 @@ public:
     const RTree* n0;
     double threshold;
   };
-  
+
   // Leaf node consisting of a base regressor
   class RReg : public RTree {
   public:
     explicit RReg(const BaseReg& _reg) : reg(_reg) {};
     ~RReg() { }
     RReg* Clone() const { return new RReg(reg); }
-    double Eval(const learch_vector& s) const { 
+    double Eval(const learch_vector& s) const {
       return BasicRegressorOps<BaseReg>::Eval(reg, s);
     };
     std::string AsString() const {
@@ -105,8 +105,8 @@ public:
   };
 
   SumThreshRegressor(const BaseReg& reg, double _threshold)
-    : regTree(new RReg(reg)), 
-      threshold(_threshold) 
+    : regTree(new RReg(reg)),
+      threshold(_threshold)
   {};
 
   SumThreshRegressor(const RTree& _regTree, double _threshold)
@@ -119,11 +119,11 @@ public:
       threshold(src.threshold)
   {};
 
-  ~SumThreshRegressor() { 
+  ~SumThreshRegressor() {
     delete regTree;
   }
 
-  SumThreshRegressor& operator=(const SumThreshRegressor& src) 
+  SumThreshRegressor& operator=(const SumThreshRegressor& src)
   {
     delete regTree;
     regTree = src.regTree->Clone();
@@ -133,26 +133,26 @@ public:
 
   typedef SumThreshRegressor Reg;
 
-  double Eval(const learch_vector& s) const { 
-    return regTree->Eval(s); 
+  double Eval(const learch_vector& s) const {
+    return regTree->Eval(s);
   }
 
-  Reg Scale(double scale) const { 
+  Reg Scale(double scale) const {
     RScale result(*regTree, scale);
     return Reg(result, threshold);
   }
 
   Reg Project() const {
     RThresh result(*regTree, threshold);
-    return Reg(result, threshold); 
+    return Reg(result, threshold);
   }
 
-  Reg Add(const Reg& r1) const { 
+  Reg Add(const Reg& r1) const {
     RSum result(*regTree, *r1.regTree);
     return Reg(result, threshold);
   }
 
-  string ToString() const {
+  std::string ToString() const {
     return regTree->AsString();
   }
 
@@ -171,14 +171,14 @@ public:
   typedef SumThreshRegressor<BaseReg> Reg;
 
   static double
-  Eval(const Reg& r0, const learch_vector& state) { 
-    return r0.Eval(state); 
+  Eval(const Reg& r0, const learch_vector& state) {
+    return r0.Eval(state);
   }
 };
 
 template <typename BaseReg>
 class DbgRegressorOps< SumThreshRegressor<BaseReg> > {
-  
+
 public:
 
   static std::string
@@ -192,7 +192,7 @@ public:
    Implementation of operations on a SumThreshRegressor
  */
 template <typename BaseReg>
-class ComposedRegressorOps< SumThreshRegressor<BaseReg> > : 
+class ComposedRegressorOps< SumThreshRegressor<BaseReg> > :
   public BasicRegressorOps< SumThreshRegressor<BaseReg> > {
 
 public:
@@ -222,7 +222,7 @@ public:
 template <class BaseRegParams>
 struct SumThreshRegressorParams {
   SumThreshRegressorParams(const BaseRegParams& _baseRegParams,
-                           double _threshold) 
+                           double _threshold)
     : baseRegParams(_baseRegParams),
       threshold(_threshold) {};
   BaseRegParams baseRegParams;

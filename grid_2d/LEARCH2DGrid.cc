@@ -289,7 +289,7 @@ public:
        const learch_vector& goal) {
 
     printf("Evaluating loss-augmented cost function\n");
-    vector<int> gridSize(2);
+    std::vector<int> gridSize(2);
     gridSize[0] = env.mapImage.width();
     gridSize[1] = env.mapImage.height();
     double costGridMem[gridSize[0]][gridSize[1]];
@@ -307,13 +307,13 @@ public:
     }
 
     printf("Calling fast marching method\n");
-    vector<double> fmmCostDx(2);   // dimensions of a grid cell
+    std::vector<double> fmmCostDx(2);   // dimensions of a grid cell
     fmmCostDx[0] = GRID_CELL_SIZE;
     fmmCostDx[1] = GRID_CELL_SIZE;
-    vector<int> fmmGoal(2);        // goal location
+    std::vector<int> fmmGoal(2);        // goal location
     fmmGoal[0] = goal(0);
     fmmGoal[1] = goal(1);
-    vector<int> fmmStop;
+    std::vector<int> fmmStop;
     double valfMem[gridSize[0]][gridSize[1]];
     ArrayND<double> fmmCostGrid(&costGridMem[0][0], gridSize, ARRAY_C_LAYOUT);
     ArrayND<double> fmmValf(&valfMem[0][0], gridSize, ARRAY_C_LAYOUT);
@@ -329,7 +329,7 @@ private:
   // find the path given the FMM value function
   static learch_path
   FindFMMPath(const ArrayND<double>& fmmValf, const learch_path path0) {
-    vector<int> dims = fmmValf.getDims();
+    std::vector<int> dims = fmmValf.getDims();
     learch_vector curPos = path0[path0.size()-1];
     std::vector<int> curPosInt(2), nextPosInt(2);
     curPosInt[0] = curPos(0);
@@ -361,11 +361,11 @@ private:
 
   static CImg<double>
   ArrayNDToCImg(const ArrayND<double>& cost) {
-    vector<int> dims = cost.getDims();
+    std::vector<int> dims = cost.getDims();
     CImg<double> result(dims[0], dims[1], 1, IMAGE_CHANNELS);
     for (int x = 0; x < dims[0]; x++) {
       for (int y = 0; y < dims[1]; y++) {
-        vector<int> loc(2);
+        std::vector<int> loc(2);
         loc[0] = x; loc[1] = y;
         double viewCost = log(cost.get(loc) + 1e-12);
         //        double viewCost = cost.get(loc);
