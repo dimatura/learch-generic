@@ -6,7 +6,7 @@
    ==========
 
    This is example code showing how to apply the LEARCH library to
-   learn costs for a simple 2D path planning problem. 
+   learn costs for a simple 2D path planning problem.
 
    Prerequisites
    ==========
@@ -27,12 +27,12 @@
    2) A window will pop up for each input image in sequence. Click and drag
       the mouse to define a training path for each input image.  Then close
       the window.
-   3) The training will begin.  Every time the training algorithm calls 
-      the path planner, a window will appear depicting the current 
+   3) The training will begin.  Every time the training algorithm calls
+      the path planner, a window will appear depicting the current
       loss-augmented cost function for the current environment, along with
       the optimal path for this cost function.  Close the window to proceed.
    4) The training will stop after a fixed number of iterations.
-   
+
 
    Detailed description
    ==========
@@ -123,7 +123,7 @@ using namespace cimg_library;
 
 /**
    The concrete type of the environment.
-   Contains a map as well as blurred versions of it for 
+   Contains a map as well as blurred versions of it for
    feature extraction.
 */
 class Grid2DEnvironment {
@@ -176,7 +176,7 @@ private:
    The concrete type of the feature function
 */
 class Grid2DBlurFeatures {
-  
+
 };
 
 /**
@@ -189,7 +189,7 @@ public:
 
   static learch_vector
   Eval(const Grid2DBlurFeatures& featureFunc,
-       const Grid2DEnvironment& env, 
+       const Grid2DEnvironment& env,
        const learch_vector& state) {
     const int nBlurs = env.blurredMaps.size();
     const int nFeatures = nBlurs * IMAGE_CHANNELS + 1;
@@ -249,7 +249,7 @@ public:
           for (int c = 0; c < 3; c++)
             result(x,y,0,c) = src(x,y);
       return result;
-    } 
+    }
     return CImg<double>(src);
   }
 
@@ -325,8 +325,8 @@ public:
   }
 
 private:
-  
-  // find the path given the FMM value function 
+
+  // find the path given the FMM value function
   static learch_path
   FindFMMPath(const ArrayND<double>& fmmValf, const learch_path path0) {
     vector<int> dims = fmmValf.getDims();
@@ -378,7 +378,7 @@ private:
 
   static void
   SuperimposePath(const learch_path& path,
-                  CImg<double>& img) {                  
+                  CImg<double>& img) {
     double imMax = img.max();
     for (int ii = 0; ii < path.size(); ii++) {
       for (int c = 0; c < IMAGE_CHANNELS; c++)
@@ -401,7 +401,7 @@ private:
     while (!displayCost.is_closed()) {
       displayCost.wait();
       if (displayCost.button()) {
-        printf("map value = %g\n", costImg(displayCost.mouse_x(), 
+        printf("map value = %g\n", costImg(displayCost.mouse_x(),
                                            displayCost.mouse_y()));
       }
     }
@@ -437,11 +437,11 @@ public:
 
   static void Run() {
     // Get the training data
-    std::vector<std::string> filenames = 
+    std::vector<std::string> filenames =
       TrainingDataRetriever::ParseTrainingFilenames(TEST_IMAGE_FILES);
     std::vector<TrainingDataRetriever::EnvAndPath>* rawTrainData =
       TrainingDataRetriever::GetTrainingData(filenames);
-    
+
     // Initialize feature/loss/cost functions, objective functional,
     // and functional optimizer
     FeatureFunc featureFunc;
